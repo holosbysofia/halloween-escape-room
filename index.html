@@ -1,0 +1,1715 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09050f">
+<title>Spökhuset – Halloween escape room åk 6</title>
+
+<style>
+:root{
+  --night:#09050f;
+  --panel:#171021ef;
+  --gold:#ffd36e;
+  --orange:#ff793f;
+  --cream:#fff8e8;
+  --mint:#aaf1cf;
+  --danger:#ff4d68
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:#09050f;
+  color:var(--cream);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif
+}
+
+button,input{font:inherit}
+button{cursor:pointer}
+.hide{display:none!important}
+
+body{
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 50% 0,#3c174d 0,#100817 42%,#050308 100%)
+}
+
+#fog{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.34;
+  background:
+    radial-gradient(ellipse at 15% 60%,#bca2d31c 0 12%,transparent 42%),
+    radial-gradient(ellipse at 82% 35%,#d9c9ed17 0 10%,transparent 40%);
+  animation:fog 13s ease-in-out infinite alternate
+}
+
+.moon{
+  position:fixed;
+  right:6vw;
+  top:7vh;
+  width:clamp(90px,12vw,170px);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:#f8e5a2;
+  box-shadow:0 0 55px #ffe89988;
+  opacity:.8;
+  z-index:0
+}
+
+.moon:after{
+  content:"";
+  position:absolute;
+  width:26%;
+  height:20%;
+  border-radius:50%;
+  left:25%;
+  top:21%;
+  background:#c9b77755;
+  box-shadow:45px 40px 0 2px #c9b77744
+}
+
+.bat{
+  position:fixed;
+  z-index:1;
+  font-size:clamp(24px,3vw,44px);
+  filter:drop-shadow(0 4px 4px #000);
+  animation:fly 15s linear infinite
+}
+
+.bat.b1{top:13%;left:-10%;animation-delay:-2s}
+.bat.b2{top:28%;left:-15%;animation-delay:-9s;transform:scale(.7)}
+
+.wrap{
+  position:relative;
+  z-index:2;
+  width:min(1420px,96vw);
+  margin:auto;
+  padding:14px 0 38px
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:#0a0710cc;
+  border:1px solid #ffffff24;
+  border-radius:18px;
+  padding:10px 14px;
+  margin-bottom:12px
+}
+
+.brand{
+  color:var(--gold);
+  font-weight:900;
+  letter-spacing:.06em
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end
+}
+
+.small{
+  border:1px solid #ffffff46;
+  background:#ffffff12;
+  color:#fff;
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:750
+}
+
+.small:hover{background:#ffffff25}
+
+.screen{
+  position:relative;
+  overflow:hidden;
+  border:1px solid #ffffff2e;
+  border-radius:28px;
+  background:linear-gradient(140deg,#130b1dea,#2d1739e8);
+  box-shadow:0 24px 70px #0009;
+  min-height:78vh
+}
+
+.intro{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  align-items:center;
+  padding:clamp(24px,5vw,70px);
+  gap:25px
+}
+
+.eyebrow{
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  font-weight:900
+}
+
+.intro h1,.finish h1{
+  font-family:Georgia,serif;
+  font-size:clamp(3rem,7vw,7.2rem);
+  line-height:.88;
+  margin:.14em 0;
+  color:#fff2bf;
+  text-shadow:0 5px 0 #6e2749,0 0 35px #ff8d5566
+}
+
+.intro p{
+  font-size:clamp(1.15rem,2vw,1.7rem);
+  line-height:1.55;
+  max-width:760px
+}
+
+.primary{
+  border:0;
+  border-radius:15px;
+  padding:16px 24px;
+  font-weight:900;
+  font-size:1.12rem;
+  color:#241020;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  box-shadow:0 8px 25px #ff773d45
+}
+
+.primary:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.08)
+}
+
+.art{
+  position:relative;
+  min-height:440px;
+  display:grid;
+  place-items:center
+}
+
+.house{
+  width:min(540px,100%);
+  filter:drop-shadow(0 22px 24px #000b)
+}
+
+.house .window{animation:windowFlicker 4s steps(1) infinite}
+
+.ghost{
+  position:absolute;
+  width:29%;
+  left:5%;
+  top:16%;
+  filter:drop-shadow(0 0 20px #bcdeffcc);
+  animation:ghostFloat 4s ease-in-out infinite
+}
+
+.witch{
+  position:absolute;
+  width:43%;
+  right:-3%;
+  top:3%;
+  filter:drop-shadow(0 12px 14px #0009);
+  animation:witchFly 7s ease-in-out infinite
+}
+
+.eyes{
+  position:absolute;
+  left:17%;
+  bottom:15%;
+  font-size:clamp(25px,4vw,50px);
+  opacity:0;
+  animation:eyes 8s steps(1) infinite
+}
+
+.hud{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:12px;
+  align-items:center;
+  padding:12px 18px;
+  background:#0a0710e8;
+  border-bottom:1px solid #ffffff24
+}
+
+.room-name{
+  font-weight:900;
+  color:var(--gold);
+  font-size:1.12rem
+}
+
+.timer{
+  font:900 clamp(1.25rem,2.5vw,2rem)/1 ui-monospace,monospace;
+  color:#fff
+}
+
+.timer.danger{
+  color:var(--danger);
+  animation:pulse .8s infinite
+}
+
+.progress{
+  display:flex;
+  gap:5px
+}
+
+.pip{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#ffffff22;
+  border:1px solid #ffffff44
+}
+
+.pip.done{
+  background:var(--gold);
+  box-shadow:0 0 10px var(--gold)
+}
+
+.game-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  min-height:calc(78vh - 68px)
+}
+
+.question-panel{
+  padding:clamp(20px,3.5vw,52px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center
+}
+
+.subject{
+  color:#f0b6ff;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.09em
+}
+
+.question-panel h2{
+  font:900 clamp(2rem,4vw,4.2rem)/1.05 Georgia,serif;
+  color:#fff0b1;
+  margin:.22em 0
+}
+
+.story-text{
+  font-size:clamp(1.12rem,1.8vw,1.55rem);
+  line-height:1.55;
+  background:#ffffff0b;
+  border-left:5px solid var(--orange);
+  padding:14px 18px;
+  border-radius:12px;
+  margin:8px 0 18px
+}
+
+.prompt{
+  font-size:clamp(1.22rem,2.1vw,1.8rem);
+  line-height:1.45;
+  font-weight:800;
+  margin:8px 0 16px
+}
+
+.answers{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+.answer-btn{
+  text-align:left;
+  border:2px solid #ffffff31;
+  background:#ffffff10;
+  color:#fff;
+  border-radius:15px;
+  padding:15px 17px;
+  font-weight:750;
+  font-size:clamp(1.02rem,1.45vw,1.27rem);
+  line-height:1.3
+}
+
+.answer-btn:hover,.answer-btn:focus-visible{
+  border-color:var(--gold);
+  background:#ffffff1d
+}
+
+.answer-btn.correct{
+  background:#174b3b;
+  border-color:var(--mint)
+}
+
+.answer-btn.wrong{
+  background:#571a29;
+  border-color:#ff7d8f;
+  animation:shake .35s
+}
+
+.tools{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px
+}
+
+.feedback{
+  min-height:34px;
+  margin:12px 0 0;
+  font-size:1.1rem;
+  font-weight:850;
+  color:var(--mint)
+}
+
+.feedback.try{color:#ffd1d8}
+
+.hint{
+  margin-top:10px;
+  background:#ffcf6b17;
+  border:1px solid #ffcf6b55;
+  color:#ffefbd;
+  padding:12px 15px;
+  border-radius:12px;
+  line-height:1.45
+}
+
+.side{
+  position:relative;
+  border-left:1px solid #ffffff24;
+  padding:25px 22px;
+  background:linear-gradient(#140d1fdd,#0c0814ee);
+  overflow:hidden
+}
+
+.side h3{
+  font:900 1.7rem Georgia,serif;
+  color:var(--gold);
+  margin:0 0 10px
+}
+
+.scene-art{
+  height:220px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  margin:8px 0
+}
+
+.scene-icon{
+  font-size:120px;
+  filter:drop-shadow(0 15px 10px #0008);
+  animation:ghostFloat 3.5s ease-in-out infinite
+}
+
+.creepy-message{
+  font-family:Georgia,serif;
+  color:#dfc7eb;
+  font-size:1.08rem;
+  line-height:1.45
+}
+
+.code-slots{
+  display:flex;
+  gap:8px;
+  margin:18px 0
+}
+
+.slot{
+  width:58px;
+  height:65px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  border:2px dashed #8f76a6;
+  background:#ffffff08;
+  color:var(--gold);
+  font:900 2rem ui-monospace,monospace
+}
+
+.slot.filled{
+  border-style:solid;
+  border-color:var(--gold);
+  box-shadow:0 0 18px #ffd36e33
+}
+
+.side-note{
+  font-size:.93rem;
+  color:#cdbed8;
+  line-height:1.45
+}
+
+.lock-screen,.finish{
+  padding:clamp(22px,5vw,70px);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  min-height:78vh
+}
+
+.lock-card{
+  width:min(850px,100%);
+  border:1px solid #ffffff31;
+  border-radius:24px;
+  background:#130c1edb;
+  padding:clamp(22px,4vw,48px);
+  box-shadow:0 20px 60px #0009
+}
+
+.lock-figure{
+  font-size:clamp(85px,12vw,160px);
+  animation:doorShake 4s ease-in-out infinite
+}
+
+.lock-card h1{
+  font:900 clamp(2rem,5vw,4.6rem)/1 Georgia,serif;
+  color:var(--gold);
+  margin:.2em 0
+}
+
+.lock-card p{
+  font-size:clamp(1.08rem,1.9vw,1.45rem);
+  line-height:1.5
+}
+
+.room-code{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  margin:18px 0
+}
+
+.room-code span{
+  width:66px;
+  height:74px;
+  display:grid;
+  place-items:center;
+  background:#050308;
+  border:2px solid var(--gold);
+  border-radius:12px;
+  color:var(--gold);
+  font:900 2.2rem ui-monospace,monospace
+}
+
+.code-entry{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap
+}
+
+.code-entry input{
+  width:min(330px,100%);
+  text-align:center;
+  letter-spacing:.25em;
+  padding:15px;
+  border-radius:13px;
+  border:2px solid #9d82b8;
+  background:#09050f;
+  color:white;
+  font:900 1.5rem ui-monospace,monospace
+}
+
+.lock-feedback{
+  min-height:30px;
+  color:#ffd0d9;
+  font-weight:900
+}
+
+.full-code{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:20px auto;
+  max-width:950px
+}
+
+.full-code span{
+  width:48px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border:2px solid var(--gold);
+  border-radius:9px;
+  background:#08040d;
+  color:var(--gold);
+  font:900 1.65rem ui-monospace,monospace
+}
+
+.finish .big-ghost{
+  font-size:clamp(110px,19vw,260px);
+  animation:finalGhost 2.8s ease-in-out infinite;
+  filter:drop-shadow(0 0 25px #d7ecff)
+}
+
+.finish p{font-size:clamp(1.25rem,2.3vw,1.9rem)}
+
+.jumpscare{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  background:radial-gradient(circle,#55114e,#050207 65%);
+  animation:flash .35s 2
+}
+
+.jumpscare .monster{
+  font-size:min(42vw,430px);
+  line-height:1;
+  animation:zoomMonster 1.7s both;
+  filter:drop-shadow(0 0 30px #ff526f)
+}
+
+.jumpscare p{
+  position:absolute;
+  bottom:8%;
+  font:900 clamp(1.6rem,4vw,4rem) Georgia,serif;
+  color:#fff1b4;
+  text-shadow:0 4px #771c3a
+}
+
+.credit{
+  font-size:.72rem;
+  color:#988ba2;
+  text-align:center;
+  margin-top:8px
+}
+
+.projector .screen{min-height:90vh}
+.projector .game-grid{min-height:calc(90vh - 70px)}
+.projector .question-panel{padding:4vw}
+.projector .answer-btn{font-size:clamp(1.25rem,2vw,1.75rem)}
+
+@keyframes fog{
+  to{transform:translate(5vw,-2vh) scale(1.12)}
+}
+
+@keyframes fly{
+  0%{transform:translateX(0) translateY(0)}
+  45%{transform:translateX(60vw) translateY(8vh)}
+  100%{transform:translateX(125vw) translateY(-3vh)}
+}
+
+@keyframes ghostFloat{
+  50%{transform:translateY(-20px) rotate(3deg)}
+}
+
+@keyframes witchFly{
+  0%,100%{transform:translate(-5px,10px) rotate(-4deg)}
+  50%{transform:translate(22px,-22px) rotate(4deg)}
+}
+
+@keyframes windowFlicker{
+  0%,47%,53%,100%{fill:#ffc24d}
+  48%,52%{fill:#2a1836}
+}
+
+@keyframes eyes{
+  0%,70%,76%,100%{opacity:0}
+  71%,75%{opacity:1}
+}
+
+@keyframes shake{
+  25%{transform:translateX(-7px)}
+  50%{transform:translateX(7px)}
+  75%{transform:translateX(-4px)}
+}
+
+@keyframes pulse{50%{opacity:.45}}
+
+@keyframes doorShake{
+  0%,90%,100%{transform:rotate(0)}
+  92%{transform:rotate(-3deg)}
+  95%{transform:rotate(3deg)}
+  98%{transform:rotate(-2deg)}
+}
+
+@keyframes flash{50%{filter:brightness(2)}}
+
+@keyframes zoomMonster{
+  0%{transform:scale(.05);opacity:0}
+  30%{opacity:1}
+  70%{transform:scale(1.12)}
+  100%{transform:scale(.95)}
+}
+
+@keyframes finalGhost{
+  50%{transform:translateY(-20px) scale(1.05)}
+}
+
+@media(max-width:900px){
+  .intro,.game-grid{grid-template-columns:1fr}
+  .art{min-height:340px}
+  .side{border-left:0;border-top:1px solid #ffffff24}
+  .scene-art{height:150px}
+  .scene-icon{font-size:90px}
+  .answers{grid-template-columns:1fr}
+  .hud{grid-template-columns:1fr auto}
+  .progress{grid-column:1/-1}
+  .moon{opacity:.45}
+}
+
+@media(max-width:540px){
+  .wrap{width:100%;padding:0}
+  .screen,.topbar{border-radius:0}
+  .topbar{align-items:flex-start}
+  .intro{padding:28px 18px}
+  .art{min-height:280px}
+  .question-panel{padding:23px 16px}
+  .side{padding:22px 16px}
+  .small{padding:8px 10px}
+  .full-code span{width:36px;height:48px;font-size:1.3rem}
+}
+</style>
+</head>
+
+<body>
+
+<div id="fog"></div>
+<div class="moon"></div>
+<div class="bat b1">🦇</div>
+<div class="bat b2">🦇</div>
+
+<main class="wrap" id="app">
+
+<header class="topbar">
+  <div class="brand">🕯️ SPÖKHUSET · ESCAPE ROOM ÅK 6</div>
+
+  <div class="actions">
+    <button class="small" id="soundBtn">🔊 Ljud på</button>
+    <button class="small" id="projectorBtn">⛶ Projektorläge</button>
+    <button class="small" id="restartBtn">↺ Börja om</button>
+  </div>
+</header>
+
+<section class="screen intro" id="intro">
+
+  <div>
+    <div class="eyebrow">Fem rum · fem koder · 40 minuter</div>
+
+    <h1>Vågar ni<br>gå in?</h1>
+
+    <p>
+      Häxan Mira har låst in spöket Lumi. För att hitta ut måste ni
+      lösa 15 uppgifter. Efter vart tredje svar väntar ett kodlås –
+      och något rör sig i mörkret.
+    </p>
+
+    <p>
+      <strong>
+        Arbeta tillsammans. Förklara hur ni tänker innan ni svarar.
+      </strong>
+    </p>
+
+    <button class="primary" id="startBtn">Öppna dörren →</button>
+  </div>
+
+  <div class="art" aria-label="Ett spökhus med en häxa och ett spöke">
+
+    <svg class="house" viewBox="0 0 560 470">
+      <path d="M58 410h450L478 201l-72-46-25-72-36 42-70-91-69 91-42-46-24 78-73 52z"
+            fill="#120d18" stroke="#6f4d7d" stroke-width="7"/>
+
+      <path d="M196 410V189h165v221"
+            fill="#20142b" stroke="#6f4d7d" stroke-width="6"/>
+
+      <path d="M247 410V294h67v116"
+            fill="#09070c" stroke="#765283" stroke-width="5"/>
+
+      <g class="window" fill="#ffc24d">
+        <rect x="216" y="220" width="42" height="48" rx="4"/>
+        <rect x="300" y="220" width="42" height="48" rx="4"/>
+        <rect x="94" y="247" width="42" height="49" rx="4"/>
+        <rect x="420" y="245" width="42" height="49" rx="4"/>
+      </g>
+
+      <path d="M0 414q74-48 145 0t145 0 145 0 125 0v56H0z"
+            fill="#07040a"/>
+
+      <g fill="#0a0710">
+        <circle cx="75" cy="148" r="48"/>
+        <circle cx="472" cy="137" r="56"/>
+      </g>
+
+      <g stroke="#0a0710" stroke-width="12">
+        <path d="M74 176v242M472 170v244M74 205l-50-52M74 230l63-69"/>
+        <path d="M472 210l-62-74M472 230l58-64"/>
+      </g>
+    </svg>
+
+    <svg class="ghost" viewBox="0 0 180 220">
+      <path d="M33 202V90a57 57 0 01114 0v112l-23-18-20 17-18-17-20 18-18-18z"
+            fill="#e9f7ff" stroke="#9ccdf3" stroke-width="5"/>
+      <ellipse cx="70" cy="90" rx="8" ry="13" fill="#281735"/>
+      <ellipse cx="111" cy="90" rx="8" ry="13" fill="#281735"/>
+      <ellipse cx="91" cy="122" rx="14" ry="18" fill="#281735"/>
+    </svg>
+
+    <svg class="witch" viewBox="0 0 270 220">
+      <path d="M18 180l210-42" stroke="#8f5a2c"
+            stroke-width="12" stroke-linecap="round"/>
+      <path d="M212 133l43-14-13 24 25 2-48 13z" fill="#e5ac52"/>
+      <path d="M91 145q10-55 48-61 44-6 62 50l-48 30z"
+            fill="#663781"/>
+      <circle cx="145" cy="69" r="27" fill="#d9a17f"/>
+      <path d="M109 65L148 4l48 58q-46-10-87 3z"
+            fill="#24112e" stroke="#f2bd58" stroke-width="4"/>
+      <path d="M96 58q49-13 106 2"
+            stroke="#24112e" stroke-width="13" stroke-linecap="round"/>
+      <path d="M135 69h6m16 0h6"
+            stroke="#25152d" stroke-width="5" stroke-linecap="round"/>
+      <path d="M145 84q9 7 18 0"
+            fill="none" stroke="#782d49" stroke-width="3"/>
+    </svg>
+
+    <div class="eyes">👀</div>
+  </div>
+</section>
+
+<section class="screen hide" id="game">
+
+  <div class="hud">
+    <div class="room-name" id="roomName"></div>
+    <div class="timer" id="timer">40:00</div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="game-grid">
+
+    <article class="question-panel" id="questionPanel"></article>
+
+    <aside class="side">
+      <h3 id="sideTitle">Rummets kod</h3>
+
+      <div class="scene-art">
+        <div class="scene-icon" id="sceneIcon">👻</div>
+      </div>
+
+      <p class="creepy-message" id="creepyMessage"></p>
+
+      <div class="code-slots" id="codeSlots"></div>
+
+      <p class="side-note">
+        Varje genomtänkt svar ger en siffra. Skriv upp koderna –
+        de behövs vid den sista dörren.
+      </p>
+    </aside>
+
+  </div>
+</section>
+
+<section class="screen lock-screen hide" id="roomLock">
+  <div class="lock-card">
+
+    <div class="lock-figure">🚪</div>
+    <div class="eyebrow">RUMMET ÄR LÅST</div>
+
+    <h1>Ange koden</h1>
+
+    <p id="lockText"></p>
+
+    <div class="room-code" id="roomCodeDisplay"></div>
+
+    <div class="code-entry">
+      <input id="roomCodeInput"
+             inputmode="numeric"
+             maxlength="3"
+             placeholder="___">
+
+      <button class="primary" id="unlockRoomBtn">
+        Lås upp →
+      </button>
+    </div>
+
+    <p class="lock-feedback" id="roomLockFeedback"></p>
+  </div>
+</section>
+
+<section class="screen lock-screen hide" id="finalLock">
+  <div class="lock-card">
+
+    <div class="lock-figure">⛓️🚪⛓️</div>
+    <div class="eyebrow">DEN SISTA DÖRREN</div>
+
+    <h1>Hela koden behövs</h1>
+
+    <p>
+      Alla siffror syns här, även den sista. Läs dem från vänster
+      till höger och skriv hela koden.
+    </p>
+
+    <div class="full-code" id="fullCode"></div>
+
+    <div class="code-entry">
+      <input id="finalCodeInput"
+             inputmode="numeric"
+             maxlength="15"
+             placeholder="15 siffror">
+
+      <button class="primary" id="finalUnlockBtn">
+        Öppna dörren
+      </button>
+    </div>
+
+    <p class="lock-feedback" id="finalFeedback"></p>
+  </div>
+</section>
+
+<section class="screen finish hide" id="finish">
+  <div>
+    <div class="big-ghost">👻</div>
+    <div class="eyebrow">NI TOG ER UT UR SPÖKHUSET</div>
+
+    <h1>Bra jobbat!</h1>
+
+    <p>
+      Ni löste alla 15 uppgifter och öppnade den sista dörren.
+    </p>
+
+    <button class="primary" id="againBtn">Spela igen</button>
+  </div>
+</section>
+
+<p class="credit">
+  Kusligt skratt: “Evil Laughter” av stilgar, public domain via
+  Wikimedia Commons. Slutljud: Nick121087, CC0 via Wikimedia Commons.
+</p>
+
+</main>
+
+<div class="jumpscare hide" id="jumpscare">
+  <div class="monster" id="monster">👻</div>
+  <p id="scareText">Något följde efter er …</p>
+</div>
+
+<audio id="laughAudio"
+       preload="auto"
+       src="https://upload.wikimedia.org/wikipedia/commons/f/fb/Evil_laughter.ogg">
+</audio>
+
+<audio id="screamAudio"
+       preload="auto"
+       src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Nick121087_-_Demonic_Woman_Scream_%28cc0%29_%28freesound%29.mp3">
+</audio>
+
+<script>
+(() => {
+
+const rooms = [
+
+{
+  name:"Rum 1 · Häxans laboratorium",
+  icon:"🧙‍♀️",
+  message:"Flaskorna klirrar fast ingen rör dem. På väggen står tre bråkuppgifter skrivna med röd krita.",
+  code:"472",
+  scare:"🧙‍♀️",
+  scareText:"Häxan såg att ni klarade koden …",
+
+  questions:[
+
+    {
+      subject:"Matematik · subtraktion av bråk",
+      title:"Flaskan som läcker",
+      story:"En flaska innehåller 5/6 liter trollsaft. Under natten läcker 1/4 liter ut.",
+      prompt:"Hur mycket trollsaft finns kvar?",
+      options:[
+        "4/2 liter",
+        "7/12 liter",
+        "4/10 liter",
+        "1/2 liter"
+      ],
+      correct:1,
+      hint:"Bestäm minsta gemensamma nämnare för 6 och 4. Skriv båda bråken i tolftedelar.",
+      explain:"5/6 = 10/12 och 1/4 = 3/12. 10/12 − 3/12 = 7/12.",
+      digit:"4"
+    },
+
+    {
+      subject:"Matematik · addition av bråk",
+      title:"Kitteln fylls",
+      story:"Kitteln är fylld till 3/8. Mira häller i ytterligare 1/3 av kittelns hela volym.",
+      prompt:"Hur stor del av kitteln är fylld nu?",
+      options:[
+        "4/11",
+        "5/8",
+        "17/24",
+        "2/3"
+      ],
+      correct:2,
+      hint:"Minsta gemensamma nämnaren för 8 och 3 är 24.",
+      explain:"3/8 = 9/24 och 1/3 = 8/24. Summan är 17/24.",
+      digit:"7"
+    },
+
+    {
+      subject:"Matematik · division med bråk",
+      title:"Sex förseglade flaskor",
+      story:"Mira har 2 1/4 liter brygd. Varje liten flaska rymmer 3/8 liter.",
+      prompt:"Hur många hela flaskor kan hon fylla?",
+      options:[
+        "4 flaskor",
+        "5 flaskor",
+        "6 flaskor",
+        "8 flaskor"
+      ],
+      correct:2,
+      hint:"Skriv 2 1/4 som 9/4. Dividera sedan med 3/8 genom att multiplicera med det omvända bråket.",
+      explain:"9/4 ÷ 3/8 = 9/4 × 8/3 = 6.",
+      digit:"2"
+    }
+  ]
+},
+
+{
+  name:"Rum 2 · Den döda skogen",
+  icon:"🌲",
+  message:"Grenarna skrapar mot fönstret. Något tungt springer mellan träden, men lämnar inga spår.",
+  code:"951",
+  scare:"🐺",
+  scareText:"Ett morrande hördes alldeles bakom er!",
+
+  questions:[
+
+    {
+      subject:"NO · ekosystem",
+      title:"När rävarna försvinner",
+      story:"I skogen äter rävar kaniner och kaniner äter gräs. Under flera år minskar antalet rävar kraftigt.",
+      prompt:"Vilken förändring är mest sannolik efter en tid?",
+      options:[
+        "Färre kaniner och mer gräs",
+        "Fler kaniner och mindre gräs",
+        "Fler rävar och mer gräs",
+        "Antalet kaniner och gräs påverkas inte"
+      ],
+      correct:1,
+      hint:"Följ två steg i näringskedjan: färre rovdjur påverkar kaninerna, som sedan påverkar gräset.",
+      explain:"Färre rävar kan ge fler kaniner. Fler kaniner äter mer gräs, så gräset kan minska.",
+      digit:"9"
+    },
+
+    {
+      subject:"NO · kraft och energi",
+      title:"Pumpan glider",
+      story:"En pumpa får en knuff över ett trägolv. Ingen knuffar mer, men pumpan saktar ner och stannar.",
+      prompt:"Vilken förklaring är mest fullständig?",
+      options:[
+        "Tyngdkraften drar pumpan bakåt",
+        "Friktionen verkar mot rörelsen och rörelseenergi omvandlas bland annat till värme",
+        "Pumpans massa försvinner när den rullar",
+        "Golvet saknar krafter när knuffen är slut"
+      ],
+      correct:1,
+      hint:"Tänk på kraftens riktning och vad som händer med energin.",
+      explain:"Friktionen motverkar rörelsen. En del av rörelseenergin omvandlas till värme.",
+      digit:"5"
+    },
+
+    {
+      subject:"NO · krafter",
+      title:"Trollstaven faller",
+      story:"Mira tappar sin trollstav från tornet. När farten ökar blir luftmotståndet större.",
+      prompt:"Vilket påstående beskriver krafterna bäst medan staven fortfarande ökar farten nedåt?",
+      options:[
+        "Luftmotståndet är större än tyngdkraften",
+        "Tyngdkraften och luftmotståndet är lika stora",
+        "Tyngdkraften är större än luftmotståndet",
+        "Ingen kraft verkar efter att hon släppt staven"
+      ],
+      correct:2,
+      hint:"Om föremålet accelererar nedåt måste den sammanlagda kraften vara riktad nedåt.",
+      explain:"Tyngdkraften nedåt är då större än luftmotståndet uppåt.",
+      digit:"1"
+    }
+  ]
+},
+
+{
+  name:"Rum 3 · Spegelkorridoren",
+  icon:"🪞",
+  message:"I speglarna syns Lumi, men när ni vänder er om är korridoren tom. Läs noga – allt sägs inte rakt ut.",
+  code:"836",
+  scare:"👻",
+  scareText:"Lumi gled rakt igenom spegeln!",
+
+  questions:[
+
+    {
+      subject:"Svenska · läsa mellan raderna",
+      title:"Den öppna dörren",
+      story:"Mira gick långsamt mot det gamla huset. Dörren stod öppen, trots att hon var säker på att hon hade stängt den. Inifrån hördes ett svagt skrapande ljud. Hon tog ett steg bakåt.",
+      prompt:"Vilken slutsats stöds bäst av flera detaljer i texten?",
+      options:[
+        "Mira ångrar att hon inte tog med städredskap",
+        "Mira tror att någon eller något kan finnas i huset",
+        "Mira har glömt vilket hus hon bor i",
+        "Mira vill lämna dörren öppen för att vädra"
+      ],
+      correct:1,
+      hint:"Koppla samman den öppna dörren, ljudet och att Mira backar.",
+      explain:"Flera detaljer visar att Mira uppfattar fara eller osäkerhet och därför backar.",
+      digit:"8"
+    },
+
+    {
+      subject:"Svenska · berättarteknik",
+      title:"Ljuset som inte borde röra sig",
+      story:"På bordet låg tre ljus. Två hade slocknat. Det tredje fladdrade, trots att fönstret var stängt. Från övervåningen kom ett enda långsamt steg.",
+      prompt:"Hur bygger författaren främst upp spänningen?",
+      options:[
+        "Genom att förklara exakt vem som går på övervåningen",
+        "Genom oförklarliga detaljer och genom att hålla orsaken hemlig",
+        "Genom att beskriva bordets färg mycket noggrant",
+        "Genom att låta alla personer skratta åt situationen"
+      ],
+      correct:1,
+      hint:"Fundera på vad läsaren ännu inte får veta och vilka detaljer som bryter mot det normala.",
+      explain:"Ljuset fladdrar utan tydlig orsak och steget förklaras inte.",
+      digit:"3"
+    },
+
+    {
+      subject:"Svenska · inferens",
+      title:"Svaret i fönstret",
+      story:"Lumi såg att alla fönster var mörka. Hon ställde sin lykta utanför dörren och väntade. En minut senare tändes ett ljus i huset mittemot och släcktes sedan två gånger.",
+      prompt:"Vad är den rimligaste tolkningen?",
+      options:[
+        "Grannen försöker svara på Lumis ljussignal",
+        "Grannen har säkert glömt att betala elräkningen",
+        "Lumi vill att grannen ska släcka alla lampor",
+        "Det bevisar att huset mittemot är tomt"
+      ],
+      correct:0,
+      hint:"Grannen svarar inte med ord, men gör något Lumi kan se strax efter hennes signal.",
+      explain:"Tidpunkten och blinkningarna tyder på att grannen svarar med ljuset.",
+      digit:"6"
+    }
+  ]
+},
+
+{
+  name:"Rum 4 · Spökstadens rådhus",
+  icon:"🏛️",
+  message:"Stadens klocka har stannat. Bakom den låsta valurnan ligger nästa kod.",
+  code:"427",
+  scare:"🧟",
+  scareText:"En hand slog plötsligt mot valurnan!",
+
+  questions:[
+
+    {
+      subject:"SO · demokrati och matematik",
+      title:"Majoritet i Spökstaden",
+      story:"Spökstadens råd har 31 platser. Parti A har 12, parti B 10, parti C 5 och parti D 4 platser. Minst 16 platser behövs för majoritet.",
+      prompt:"Vilka två partier kan tillsammans få exakt minsta möjliga majoritet?",
+      options:[
+        "A och B",
+        "A och C",
+        "B och C",
+        "A och D"
+      ],
+      correct:3,
+      hint:"Addera två partiers platser. Sök efter summan 16.",
+      explain:"Parti A och D får 12 + 4 = 16 platser.",
+      digit:"4"
+    },
+
+    {
+      subject:"SO · hemliga val",
+      title:"Den slutna valurnan",
+      story:"Alla får rösta utan att någon annan ser vilken kandidat de väljer.",
+      prompt:"Varför är valhemligheten viktigast i en demokrati?",
+      options:[
+        "Den gör att rösterna aldrig behöver räknas",
+        "Den skyddar väljaren från press och gör det lättare att rösta fritt",
+        "Den gör att bara vinnaren får veta resultatet",
+        "Den hindrar människor från att diskutera politik"
+      ],
+      correct:1,
+      hint:"Tänk på vad som kan hända om andra kan kontrollera hur en person röstar.",
+      explain:"Valhemligheten minskar risken för hot, kontroll och påtryckningar.",
+      digit:"2"
+    },
+
+    {
+      subject:"SO · källkritik",
+      title:"Vittnet från 1896",
+      story:"Ni undersöker hur en person upplevde ett val år 1896. Källa 1 är personens dagbok skriven samma kväll. Källa 2 är en lärobok från 2025 som beskriver valet i stort.",
+      prompt:"Vilken källa är mest användbar för just personens egna upplevelser – och varför?",
+      options:[
+        "Källa 1, eftersom den är nära personen och händelsen, även om den är subjektiv",
+        "Källa 2, eftersom nya texter alltid är helt sanna",
+        "Källa 1, eftersom dagböcker aldrig innehåller åsikter",
+        "Båda är oanvändbara eftersom de är skrivna texter"
+      ],
+      correct:0,
+      hint:"Frågan gäller en persons upplevelse. Närhet är en styrka, men källan kan ändå vara vinklad.",
+      explain:"Dagboken ligger nära personen och tiden, men måste granskas som en subjektiv källa.",
+      digit:"7"
+    }
+  ]
+},
+
+{
+  name:"Rum 5 · Den förbjudna balsalen",
+  icon:"🕯️",
+  message:"Musiken börjar av sig själv. Följ instruktionerna och lös de sista uppgifterna innan dörren kedjas fast.",
+  code:"591",
+  scare:"🧛",
+  scareText:"Någon viskade: Ni kommer aldrig ut …",
+
+  questions:[
+
+    {
+      subject:"English · reading inference",
+      title:"The cat behind the door",
+      story:"Nora left the black cat outside and locked the door. A minute later, she heard a soft meow behind her. One window stood open.",
+      prompt:"What can we reasonably infer?",
+      options:[
+        "The cat probably entered through the open window",
+        "Nora never had a cat",
+        "The door unlocked itself",
+        "The sound must have come from a dog"
+      ],
+      correct:0,
+      hint:"Connect the cat outside, the sound inside and the open window.",
+      explain:"The open window gives a reasonable explanation for how the cat entered.",
+      digit:"5"
+    },
+
+    {
+      subject:"English · vocabulary in context",
+      title:"The dim corridor",
+      story:"The corridor was dim. Only one candle burned at the far end, and Nora could barely see the floor.",
+      prompt:"What does dim most likely mean here?",
+      options:[
+        "Very noisy",
+        "Poorly lit",
+        "Warm and comfortable",
+        "Crowded"
+      ],
+      correct:1,
+      hint:"Use the clues one candle and barely see.",
+      explain:"Dim means that there is little light.",
+      digit:"9"
+    },
+
+    {
+      subject:"Rörelse · flerstegsproblem",
+      title:"Bryt häxans rörelsemönster",
+      story:"Gör en sekvens med 3 steg på stället, 2 knäböj och 4 armcirklar. Upprepa hela sekvensen 3 gånger. Avsluta med 5 tåhävningar.",
+      prompt:"Hur många rörelser eller repetitioner gör ni sammanlagt?",
+      options:[
+        "27",
+        "29",
+        "32",
+        "35"
+      ],
+      correct:2,
+      hint:"En sekvens är 3 + 2 + 4. Multiplicera med 3 och addera sedan 5.",
+      explain:"3 + 2 + 4 = 9. Tre sekvenser ger 27. 27 + 5 = 32.",
+      digit:"1"
+    }
+  ]
+}
+
+];
+
+const $ = selector => document.querySelector(selector);
+
+let roomIndex = 0;
+let questionIndex = 0;
+let collected = [];
+let timeLeft = 40 * 60;
+let timerId = null;
+let laughTimer = null;
+let soundOn = true;
+let audioCtx = null;
+let windGain = null;
+let locked = false;
+
+const laugh = $("#laughAudio");
+const scream = $("#screamAudio");
+
+laugh.volume = 0.23;
+scream.volume = 0.72;
+
+function normalizeCode(value){
+  return value.replace(/\D/g,"");
+}
+
+function allQuestions(){
+  return rooms.flatMap(room => room.questions);
+}
+
+function speak(text,lang="sv-SE"){
+  if(!("speechSynthesis" in window)) return;
+
+  speechSynthesis.cancel();
+
+  const voice = new SpeechSynthesisUtterance(text);
+  voice.lang = lang;
+  voice.rate = 0.94;
+  voice.pitch = 0.92;
+
+  speechSynthesis.speak(voice);
+}
+
+function startWind(){
+  if(audioCtx || !soundOn) return;
+
+  const AudioEngine =
+    window.AudioContext || window.webkitAudioContext;
+
+  if(!AudioEngine) return;
+
+  audioCtx = new AudioEngine();
+
+  const buffer = audioCtx.createBuffer(
+    1,
+    audioCtx.sampleRate * 2,
+    audioCtx.sampleRate
+  );
+
+  const data = buffer.getChannelData(0);
+
+  for(let i=0;i<data.length;i++){
+    data[i] = (Math.random()*2-1)*0.24;
+  }
+
+  const source = audioCtx.createBufferSource();
+  const filter = audioCtx.createBiquadFilter();
+
+  windGain = audioCtx.createGain();
+
+  filter.type = "lowpass";
+  filter.frequency.value = 380;
+  windGain.gain.value = 0.055;
+
+  source.buffer = buffer;
+  source.loop = true;
+
+  source
+    .connect(filter)
+    .connect(windGain)
+    .connect(audioCtx.destination);
+
+  source.start();
+}
+
+function playLaugh(){
+  if(!soundOn) return;
+
+  try{
+    laugh.currentTime = Math.random()*3;
+    laugh.play().catch(()=>{});
+  }catch(error){}
+}
+
+function scheduleLaugh(){
+  clearTimeout(laughTimer);
+
+  if(!soundOn) return;
+
+  laughTimer = setTimeout(() => {
+    if(!$("#game").classList.contains("hide")){
+      playLaugh();
+    }
+
+    scheduleLaugh();
+  },26000 + Math.random()*23000);
+}
+
+function toggleSound(){
+  soundOn = !soundOn;
+
+  $("#soundBtn").textContent =
+    soundOn ? "🔊 Ljud på" : "🔇 Ljud av";
+
+  if(soundOn){
+    if(windGain){
+      windGain.gain.value = 0.055;
+    }else{
+      startWind();
+    }
+
+    scheduleLaugh();
+  }else{
+    laugh.pause();
+    scream.pause();
+    clearTimeout(laughTimer);
+
+    if(windGain){
+      windGain.gain.value = 0;
+    }
+  }
+}
+
+function updateTimer(){
+  const minutes =
+    String(Math.floor(timeLeft/60)).padStart(2,"0");
+
+  const seconds =
+    String(timeLeft%60).padStart(2,"0");
+
+  $("#timer").textContent =
+    `${minutes}:${seconds}`;
+
+  $("#timer").classList.toggle(
+    "danger",
+    timeLeft <= 300
+  );
+
+  if(timeLeft > 0){
+    timeLeft--;
+  }else{
+    $("#timer").textContent = "00:00";
+  }
+}
+
+function setScreen(id){
+  ["intro","game","roomLock","finalLock","finish"]
+    .forEach(screen => {
+      $("#" + screen).classList.toggle(
+        "hide",
+        screen !== id
+      );
+    });
+}
+
+function startGame(){
+  roomIndex = 0;
+  questionIndex = 0;
+  collected = [];
+  timeLeft = 40 * 60;
+  locked = false;
+
+  setScreen("game");
+  startWind();
+  scheduleLaugh();
+
+  clearInterval(timerId);
+  updateTimer();
+
+  timerId = setInterval(updateTimer,1000);
+
+  renderQuestion();
+}
+
+function progressPips(){
+  const completedBeforeRoom =
+    rooms
+      .slice(0,roomIndex)
+      .reduce((total,room) =>
+        total + room.questions.length,0);
+
+  const completed =
+    completedBeforeRoom + questionIndex;
+
+  $("#progress").innerHTML =
+    allQuestions()
+      .map((question,index) =>
+        `<span class="pip ${index < completed ? "done" : ""}"></span>`
+      )
+      .join("");
+}
+
+function renderQuestion(){
+  locked = false;
+
+  const room = rooms[roomIndex];
+  const question = room.questions[questionIndex];
+
+  $("#roomName").textContent = room.name;
+  $("#sceneIcon").textContent = room.icon;
+  $("#creepyMessage").textContent = room.message;
+
+  $("#sideTitle").textContent =
+    `Rummets kod · fråga ${questionIndex+1}/3`;
+
+  $("#codeSlots").innerHTML =
+    [0,1,2]
+      .map(index =>
+        `<span class="slot ${index < questionIndex ? "filled" : ""}">
+          ${index < questionIndex ? room.code[index] : "?"}
+        </span>`
+      )
+      .join("");
+
+  progressPips();
+
+  $("#questionPanel").innerHTML = `
+    <div class="subject">
+      Fråga ${roomIndex*3+questionIndex+1} av 15 ·
+      ${question.subject}
+    </div>
+
+    <h2>${question.title}</h2>
+
+    <div class="story-text">
+      ${question.story}
+    </div>
+
+    <div class="prompt">
+      ${question.prompt}
+    </div>
+
+    <div class="answers">
+      ${question.options.map((option,index) => `
+        <button class="answer-btn" data-i="${index}">
+          <b>${String.fromCharCode(65+index)}.</b>
+          ${option}
+        </button>
+      `).join("")}
+    </div>
+
+    <div class="tools">
+      <button class="small" id="readBtn">
+        🔊 Läs upp
+      </button>
+
+      <button class="small" id="hintBtn">
+        💡 Ledtråd
+      </button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="hint hide" id="hint">
+      ${question.hint}
+    </div>
+  `;
+
+  document
+    .querySelectorAll(".answer-btn")
+    .forEach(button => {
+      button.onclick = () =>
+        answer(Number(button.dataset.i),button);
+    });
+
+  $("#readBtn").onclick = () => {
+    const alternatives =
+      question.options
+        .map((option,index) =>
+          `${String.fromCharCode(65+index)}. ${option}`
+        )
+        .join(". ");
+
+    speak(
+      `${question.title}. ${question.story}
+       ${question.prompt}. Svarsalternativ.
+       ${alternatives}`,
+      question.subject.startsWith("English")
+        ? "en-US"
+        : "sv-SE"
+    );
+  };
+
+  $("#hintBtn").onclick = () => {
+    $("#hint").classList.toggle("hide");
+  };
+}
+
+function answer(choice,button){
+  if(locked) return;
+
+  const question =
+    rooms[roomIndex].questions[questionIndex];
+
+  const feedback = $("#feedback");
+
+  if(choice !== question.correct){
+    button.classList.add("wrong");
+
+    feedback.className = "feedback try";
+    feedback.textContent =
+      "Tänk ett varv till. Förklara varför de andra alternativen inte passar.";
+
+    setTimeout(() => {
+      button.classList.remove("wrong");
+    },500);
+
+    return;
+  }
+
+  locked = true;
+
+  button.classList.add("correct");
+  collected.push(question.digit);
+
+  feedback.className = "feedback";
+
+  feedback.innerHTML = `
+    Rätt resonemang! ${question.explain}
+    <strong>Kodsiffra: ${question.digit}</strong>
+  `;
+
+  setTimeout(() => {
+    questionIndex++;
+
+    if(questionIndex < 3){
+      renderQuestion();
+    }else{
+      showRoomLock();
+    }
+  },2300);
+}
+
+function showRoomLock(){
+  const room = rooms[roomIndex];
+
+  setScreen("roomLock");
+
+  $("#lockText").textContent =
+    `Ni har hittat tre siffror i ${room.name.toLowerCase()}.
+     Skriv dem i samma ordning för att öppna nästa dörr.`;
+
+  $("#roomCodeDisplay").innerHTML =
+    room.code
+      .split("")
+      .map(digit => `<span>${digit}</span>`)
+      .join("");
+
+  $("#roomCodeInput").value = "";
+  $("#roomLockFeedback").textContent = "";
+
+  $("#roomCodeInput").focus();
+}
+
+function unlockRoom(){
+  const room = rooms[roomIndex];
+
+  if(normalizeCode($("#roomCodeInput").value) !== room.code){
+    $("#roomLockFeedback").textContent =
+      "Kedjorna sitter kvar. Kontrollera siffrorna och ordningen.";
+
+    $("#roomCodeInput").select();
+    return;
+  }
+
+  showScare(
+    room.scare,
+    room.scareText,
+    () => {
+      roomIndex++;
+      questionIndex = 0;
+
+      if(roomIndex < rooms.length){
+        setScreen("game");
+        renderQuestion();
+      }else{
+        showFinalLock();
+      }
+    }
+  );
+}
+
+function showScare(monster,text,next){
+  $("#monster").textContent = monster;
+  $("#scareText").textContent = text;
+
+  $("#jumpscare").classList.remove("hide");
+
+  playLaugh();
+
+  setTimeout(() => {
+    $("#jumpscare").classList.add("hide");
+    next();
+  },2400);
+}
+
+function showFinalLock(){
+  setScreen("finalLock");
+
+  const code =
+    rooms.map(room => room.code).join("");
+
+  $("#fullCode").innerHTML =
+    code
+      .split("")
+      .map(digit => `<span>${digit}</span>`)
+      .join("");
+
+  $("#finalCodeInput").value = "";
+  $("#finalFeedback").textContent = "";
+
+  $("#finalCodeInput").focus();
+}
+
+function finalUnlock(){
+  const code =
+    rooms.map(room => room.code).join("");
+
+  if(normalizeCode($("#finalCodeInput").value) !== code){
+    $("#finalFeedback").textContent =
+      "Dörren skakar men öppnas inte. Alla 15 siffror syns ovan – kontrollera ordningen.";
+
+    $("#finalCodeInput").select();
+    return;
+  }
+
+  clearInterval(timerId);
+  clearTimeout(laughTimer);
+
+  if(soundOn){
+    laugh.pause();
+    scream.currentTime = 0;
+
+    scream.play().catch(() => {
+      playLaugh();
+    });
+  }
+
+  setScreen("finish");
+}
+
+$("#startBtn").onclick = startGame;
+
+$("#restartBtn").onclick = () => {
+  window.speechSynthesis?.cancel();
+
+  clearInterval(timerId);
+  clearTimeout(laughTimer);
+
+  setScreen("intro");
+};
+
+$("#againBtn").onclick = startGame;
+$("#soundBtn").onclick = toggleSound;
+$("#unlockRoomBtn").onclick = unlockRoom;
+
+$("#roomCodeInput").onkeydown = event => {
+  if(event.key === "Enter"){
+    unlockRoom();
+  }
+};
+
+$("#finalUnlockBtn").onclick = finalUnlock;
+
+$("#finalCodeInput").onkeydown = event => {
+  if(event.key === "Enter"){
+    finalUnlock();
+  }
+};
+
+$("#projectorBtn").onclick = () => {
+  document.body.classList.toggle("projector");
+
+  if(!document.fullscreenElement){
+    document.documentElement
+      .requestFullscreen?.()
+      .catch(()=>{});
+  }else{
+    document
+      .exitFullscreen?.()
+      .catch(()=>{});
+  }
+};
+
+})();
+</script>
+
+</body>
+</html>
